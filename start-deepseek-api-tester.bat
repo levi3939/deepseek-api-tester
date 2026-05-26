@@ -1,6 +1,8 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
+set "HOST=127.0.0.1"
+set "NO_PROXY=localhost,127.0.0.1,::1,api.deepseek.com,%NO_PROXY%"
 
 where node >nul 2>nul
 if errorlevel 1 (
@@ -10,14 +12,14 @@ if errorlevel 1 (
   exit /b 1
 )
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "if (Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue) { Start-Process 'http://localhost:3000'; exit 1 }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "if (Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue) { Start-Process 'http://127.0.0.1:3000'; exit 1 }"
 if errorlevel 1 (
-  echo 服务已经在运行，已为你打开浏览器：http://localhost:3000
+  echo 服务已经在运行，已为你打开浏览器：http://127.0.0.1:3000
   exit /b 0
 )
 
 echo 正在启动 DeepSeek API 测试工具...
-start "" /min powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Sleep -Seconds 2; Start-Process 'http://localhost:3000'"
+start "" /min powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Sleep -Seconds 2; Start-Process 'http://127.0.0.1:3000'"
 node "deepseek-api-tester.js"
 
 echo.
